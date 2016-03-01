@@ -27,7 +27,9 @@ class ErrbitExceptionHandler implements ExceptionHandler
     public function report(Exception $e)
     {
         if($this->handler->shouldReport($e)) {
-            $this->app['errbit']->notify($e);
+            try {
+                $this->app['errbit']->notify($e);
+            } catch (Exception $eeb) { $this->app['log']->error('Errbit: ' . $eeb->getMessage()); }
         }
 
         $this->handler->report($e);
@@ -42,7 +44,7 @@ class ErrbitExceptionHandler implements ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        $this->handler->render($request, $e);
+        return $this->handler->render($request, $e);
     }
 
     /**
